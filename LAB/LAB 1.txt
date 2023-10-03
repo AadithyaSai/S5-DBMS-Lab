@@ -1,0 +1,205 @@
+#Lab 1 - Oct 03
+
+Wrote DDL commands to initialize a library management database
+
+# Queries
+----------
+
+#0
+> CREATE DATABASE library;
+> USE library
+
+#1
+> CREATE TABLE language(
+	lang_id INT PRIMARY KEY, 
+	name VARCHAR(10)
+);
+
+> DESC language;  
++---------+-------------+------+-----+---------+-------+  
+| Field   | Type        | Null | Key | Default | Extra |  
++---------+-------------+------+-----+---------+-------+  
+| lang_id | int         | NO   | PRI | NULL    |       |  
+| name    | varchar(10) | YES  |     | NULL    |       |  
++---------+-------------+------+-----+---------+-------+  
+
+#2
+> CREATE TABLE publisher(
+	publisher_id INT PRIMARY KEY, 
+	name VARCHAR(10), 
+	address VARCHAR(50)
+);
+
+> DESC publisher;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| publisher_id | int         | NO   | PRI | NULL    |       |
+| name         | varchar(10) | YES  |     | NULL    |       |
+| address      | varchar(50) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+#3
+> CREATE TABLE member(member_id INT
+	PRIMARY KEY, 
+	name VARCHAR(10), 
+	roll_no INT, 
+	ph_no INT, 
+	email VARCHAR(30), 
+	branch_code INT, 
+	status VARCHAR(10), 
+	date_of_join DATE
+);
+
+> DESC member;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| member_id    | int         | NO   | PRI | NULL    |       |
+| name         | varchar(10) | YES  |     | NULL    |       |
+| roll_no      | int         | YES  |     | NULL    |       |
+| ph_no        | int         | YES  |     | NULL    |       |
+| email        | varchar(30) | YES  |     | NULL    |       |
+| branch_code  | int         | YES  |     | NULL    |       |
+| status       | varchar(10) | YES  |     | NULL    |       |
+| date_of_join | date        | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+#4
+> CREATE TABLE author(author_id INT PRIMARY KEY, 
+	name VARCHAR(10), 
+	email VARCHAR(30), 
+	ph_no INT, 
+	status VARCHAR(10)
+);
+
+> DESC author;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| author_id | int         | NO   | PRI | NULL    |       |
+| name      | varchar(10) | YES  |     | NULL    |       |
+| email     | varchar(30) | YES  |     | NULL    |       |
+| ph_no     | int         | YES  |     | NULL    |       |
+| status    | varchar(10) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+
+#5
+> CREATE TABLE book(
+       book_id INT PRIMARY KEY,
+       title VARCHAR(20),
+       volume INT,
+       status VARCHAR(10),
+       mrp INT,
+       published_date DATE,
+       lang_id INT,
+       FOREIGN KEY(lang_id) REFERENCES language(lang_id), 
+       publisher_id INT, 
+       FOREIGN KEY(publisher_id) REFERENCES publisher(publisher_id)
+);
+
+> DESC book;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| book_id        | int         | NO   | PRI | NULL    |       |
+| title          | varchar(20) | YES  |     | NULL    |       |
+| volume         | int         | YES  |     | NULL    |       |
+| status         | varchar(10) | YES  |     | NULL    |       |
+| mrp            | int         | YES  |     | NULL    |       |
+| published_date | date        | YES  |     | NULL    |       |
+| lang_id        | int         | YES  | MUL | NULL    |       |
+| publisher_id   | int         | YES  | MUL | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+
+#6
+> CREATE TABLE book_issue( 
+	issue_id INT PRIMARY KEY, 
+	status VARCHAR(10), 
+	date_of_issue DATE,
+	expected_date_of_return DATE,
+	book_id INT, 
+	FOREIGN KEY(book_id) REFERENCES book(book_id),
+	member_id INT,
+	FOREIGN KEY(member_id) REFERENCES member(member_id) 
+);
+
+> DESC book_issue;
++-------------------------+-------------+------+-----+---------+-------+
+| Field                   | Type        | Null | Key | Default | Extra |
++-------------------------+-------------+------+-----+---------+-------+
+| issue_id                | int         | NO   | PRI | NULL    |       |
+| status                  | varchar(10) | YES  |     | NULL    |       |
+| date_of_issue           | date        | YES  |     | NULL    |       |
+| expected_date_of_return | date        | YES  |     | NULL    |       |
+| book_id                 | int         | YES  | MUL | NULL    |       |
+| member_id               | int         | YES  | MUL | NULL    |       |
++-------------------------+-------------+------+-----+---------+-------+
+
+#7
+> CREATE TABLE book_return(
+	issue_id INT PRIMARY KEY,
+	FOREIGN KEY(issue_id) REFERENCES book_issue(issue_id))
+	actual_date_of_return DATE,
+	late_days INT,
+	late_fee INT
+);
+
+> DESC book_return;
++-----------------------+------+------+-----+---------+-------+
+| Field                 | Type | Null | Key | Default | Extra |
++-----------------------+------+------+-----+---------+-------+
+| issue_id              | int  | NO   | PRI | NULL    |       |
+| actual_date_of_return | date | YES  |     | NULL    |       |
+| late_days             | int  | YES  |     | NULL    |       |
+| late_fee              | int  | YES  |     | NULL    |       |
++-----------------------+------+------+-----+---------+-------+
+
+#8
+> CREATE TABLE book_author(
+	book_id INT,
+	FOREIGN KEY(book_id) REFERENCES book(book_id),
+	author_id INT,
+	FOREIGN KEY(author_id) REFERENCES author(author_id),
+	PRIMARY KEY(book_id, author_id)
+);
+
+> DESC book_author;
++-----------+------+------+-----+---------+-------+
+| Field     | Type | Null | Key | Default | Extra |
++-----------+------+------+-----+---------+-------+
+| book_id   | int  | NO   | PRI | NULL    |       |
+| author_id | int  | NO   | PRI | NULL    |       |
++-----------+------+------+-----+---------+-------+
+
+#9
+> CREATE TABLE late_fee_rule(
+	from_days INT,
+	to_days INT,
+	amount INT 
+);
+
+> DESC late_fee_rule;
++-----------+------+------+-----+---------+-------+
+| Field     | Type | Null | Key | Default | Extra |
++-----------+------+------+-----+---------+-------+
+| from_days | int  | YES  |     | NULL    |       |
+| to_days   | int  | YES  |     | NULL    |       |
+| amount    | int  | YES  |     | NULL    |       |
++-----------+------+------+-----+---------+-------+
+
+#10
+> SHOW TABLES;
++-------------------+
+| Tables_in_library |
++-------------------+
+| author            |
+| book              |
+| book_author       |
+| book_issue        |
+| book_return       |
+| language          |
+| late_fee_rule     |
+| member            |
+| publisher         |
++-------------------+
