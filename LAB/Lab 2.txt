@@ -7,14 +7,15 @@
 
 #1
 Attempt to drop a table with and without the foreign key constraint
-> DROP TABLE language;
+> DROP TABLE member;
+ERROR 3730 (HY000): Cannot drop table 'member' referenced by a foreign key constraint 'book_issue_ibfk_2' on table 'book_issue'.
 
-ERROR 3730 (HY000): Cannot drop table 'language' referenced by a foreign key constraint 	'book_ibfk_1' on table 'book'.
+> ALTER TABLE book_issue DROP CONSTRAINT book_issue_ibfk_2;
+Query OK, 0 rows affected (0.22 sec)
+Records: 0  Duplicates: 0  Warnings: 0
 
-After removing all keys that reference language,
-> DROP TABLE language;
-
-Query OK, 0 rows affected (0.69 sec)
+> DROP TABLE member;
+Query OK, 0 rows affected (0.60 sec)
 
 #2
 Alter a table with and without data
