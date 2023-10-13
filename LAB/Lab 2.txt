@@ -1,0 +1,57 @@
+#Lab 2 - Oct 13
+
+*Testing out some SQL commands*
+
+# Queries
+----------
+
+#1
+Attempt to drop a table with and without the foreign key constraint
+> DROP TABLE language;
+
+ERROR 3730 (HY000): Cannot drop table 'language' referenced by a foreign key constraint 	'book_ibfk_1' on table 'book'.
+
+After removing all keys that reference language,
+> DROP TABLE language;
+
+Query OK, 0 rows affected (0.69 sec)
+
+#2
+Alter a table with and without data
+> ALTER TABLE language ADD lang_code VARCHAR(5);
+Query OK, 0 rows affected (0.58 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+> INSERT INTO language VALUES(1, "English", "EN-GB");
+Query OK, 1 row affected (0.21 sec)
+
+> SELECT * FROM language;
++---------+---------+-----------+
+| lang_id | name    | lang_code |
++---------+---------+-----------+
+|       1 | English | EN-GB     |
++---------+---------+-----------+
+
+> ALTER TABLE language MODIFY lang_code INT;
+ERROR 1366 (HY000): Incorrect integer value: 'EN-GB' for column 'lang_code' at row 1
+
+> ALTER TABLE language DROP COLUMN lang_code;
+Query OK, 0 rows affected (0.33 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+#3
+Execute SQL command to build indexes on member_id and book_id of table book_issue
+> CREATE INDEX book_index ON book_issue(member_id, book_id);
+Query OK, 0 rows affected, 1 warning (0.85 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+> SHOW INDEXES FROM book_issue;
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| Table      | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| book_issue |          0 | PRIMARY  |            1 | issue_id    | A         |           2 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| book_issue |          1 | book_id  |            1 | book_id     | A         |           2 |     NULL |   NULL | YES  | BTREE      |         |               | YES     | NULL       |
+| book_issue |          1 | a        |            1 | member_id   | A         |           2 |     NULL |   NULL | YES  | BTREE      |         |               | YES     | NULL       |
+| book_issue |          1 | a        |            2 | book_id     | A         |           2 |     NULL |   NULL | YES  | BTREE      |         |               | YES     | NULL       |
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+
